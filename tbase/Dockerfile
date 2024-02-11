@@ -2,19 +2,9 @@ FROM ubuntu:22.04
 
 RUN yes | unminimize
 
-RUN apt-get -qq update && apt-get -qqy install \
-  less \
-  curl \
-  tmux \
-  man \
-  git \
-  make \
-  cmake \
-  zip \
-  unzip \
-  gettext \
-  file \
-  sudo
+COPY ./pkgs .
+
+RUN apt-get -qq update && apt-get -qqy install $(cat ./pkgs) && rm pkgs
 
 RUN useradd -m -s /bin/bash -G sudo null && usermod -p $(openssl passwd null) null
 
@@ -33,5 +23,3 @@ RUN git clone https://github.com/neovim/neovim && \
   sudo dpkg -i nvim-linux64.deb
 
 RUN rm -fr neovim
-
-RUN sudo apt-get -qqy install g++ ripgrep fzf
